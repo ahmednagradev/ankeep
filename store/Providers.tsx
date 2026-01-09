@@ -2,8 +2,8 @@
 
 import { Provider } from "react-redux";
 import store, { persistor } from "@/store/store";
-import { Loader2 } from "lucide-react";
 import { PersistGate } from "redux-persist/integration/react";
+import Loader from "@/components/Loader";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
     return (
@@ -12,9 +12,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
             <PersistGate
                 persistor={persistor}
                 loading={
-                    <div className="flex h-screen w-full justify-center items-center bg-[#202124]">
-                        <Loader2 size={28} color="lightblue" className="animate-spin" />
-                    </div>
+                    <Loader fullHeight={true} />
                 }
             >
                 {children}

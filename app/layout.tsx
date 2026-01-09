@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner"
 import Providers from "@/store/Providers";
+import _layout from "./_layout";
 
 export const metadata: Metadata = {
     title: "Create Next App",
@@ -13,9 +14,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <html lang="en" className="dark">
             <body>
                 <Providers>
-                    {children}
-                    <Toaster />
+                    <_layout>
+                        {children}
+                    </_layout>
                 </Providers>
+                <Toaster />
             </body>
         </html>
     );
