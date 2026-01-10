@@ -6,6 +6,7 @@ export type Note = {
     text: string;
     imageUrl?: string;
     createdAt: number;
+    editedAt?: number;
     pinnedAt?: number;
     archivedAt?: number;
     deletedAt?: number;
@@ -31,6 +32,14 @@ const notesSlice = createSlice({
                 createdAt: Date.now(),
                 status: "active",
             })
+        },
+
+        editNote: (state, action: PayloadAction<{ id: string, title: string, text: string }>) => {
+            const note = state.notes.find(n => n.id === action.payload.id)
+            if (!note) return;
+            note.title = action.payload.title;
+            note.text = action.payload.text;
+            note.editedAt = Date.now();
         },
 
         pinNote: (state, action: PayloadAction<{ id: string }>) => {
@@ -69,5 +78,5 @@ const notesSlice = createSlice({
     }
 })
 
-export const { addNote, pinNote, archiveNote, deleteNote, activateNote, deleteNotePermanently } = notesSlice.actions;
+export const { addNote, editNote, pinNote, archiveNote, deleteNote, activateNote, deleteNotePermanently } = notesSlice.actions;
 export default notesSlice.reducer;
