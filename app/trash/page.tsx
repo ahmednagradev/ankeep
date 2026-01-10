@@ -1,9 +1,10 @@
 "use client";
 
-import { Archive, Pin, Trash2, Undo2 } from 'lucide-react';
+import { Trash2, Undo2 } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { appDispatch, rootState } from '@/store/store';
 import { activateNote, deleteNotePermanently } from '@/store/notesSlice';
+import { useState } from 'react';
 
 const Deleted = () => {
     const notesData = useSelector((state: rootState) => state.notes.notes);
@@ -15,7 +16,7 @@ const Deleted = () => {
         return (
             <div className='flex flex-1 justify-center items-center py-8 md:py-16'>
                 <div className="w-80 md:w-120 md:py-3.5 py-2.5 px-3 md:px-4 border border-[#5F6368] rounded-lg shadow-lg">
-                    <p className='text-[#868789] font-semibold md:text-center'>Notes you’ve <b>deleted</b> are kept here safely, allowing you to review or restore them whenever needed.</p>
+                    <p className='text-[#868789] font-semibold md:text-center'>Notes you <b>delete</b> are kept here safely, allowing you to review or restore them whenever needed.</p>
                 </div>
             </div>
         )

@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from 'react'
-import { Archive, Check, Edit, Pin, PinOff, Save, Trash2 } from 'lucide-react';
+import { Archive, Check, Edit, Pin, Save, Trash2 } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { appDispatch, rootState } from '@/store/store';
 import { addNote, editNote, pinNote, archiveNote, deleteNote, activateNote, Note } from '@/store/notesSlice';
@@ -10,8 +10,8 @@ const Home = () => {
     const [inputText, setInputText] = useState("");
     const [inputTitle, setInputTitle] = useState("");
     const [editingId, setEditingId] = useState("");
-    const inputRef = useRef(null);  //
-    const textareaRef = useRef(null);  //
+    const inputRef = useRef<HTMLInputElement | null>(null);
+    const textareaRef = useRef<HTMLTextAreaElement | null>(null);
     const notesData = useSelector((state: rootState) => state.notes.notes);
     const dispatch = useDispatch<appDispatch>();
 
@@ -20,36 +20,62 @@ const Home = () => {
 
     const activeAndPinnedNotes = [...pinnedNotes, ...activeNotes]
 
+    useEffect(() => {
+        inputRef.current?.focus();
+    }, [showForm])
+
+    const resetInput = () => {
+        inputRef.current?.blur();
+        textareaRef.current?.blur();
+        setInputTitle("");
+        setInputText("");
+        setShowForm(false);
+        setEditingId("");
+    }
+
     const handleAdd = (title: string, text: string) => {
         if (!inputText.trim() || !inputTitle.trim()) return;
         dispatch(addNote({ title, text }))
 
-        setInputTitle("");
-        setInputText("");
-        setShowForm(false);
+        resetInput();
     }
 
     let noteToEdit: Note | undefined;
     useEffect(() => {
         if (editingId) {
-            setShowForm(true);
             noteToEdit = activeAndPinnedNotes.find(n => n.id === editingId);
             if (noteToEdit) {
+                setShowForm(true);
                 setInputTitle(noteToEdit.title);
                 setInputText(noteToEdit.text);
+                textareaRef.current?.focus();
+
+                if (typeof window !== undefined) {
+                    window.scrollTo({ top: 0, behavior: "smooth" })
+                }
             }
         }
-    }, [editingId, noteToEdit]);
+    }, [editingId, noteToEdit, showForm]);
 
 
     const handleEdit = (id: string, title: string, text: string) => {
         if (!inputText.trim() || !inputTitle.trim()) return;
         dispatch(editNote({ id, title, text }))
 
-        setInputTitle("");
-        setInputText("");
-        setShowForm(false);
-        setEditingId("");
+        resetInput();
+
+    }
+
+    const handleDelete = (id: string) => {
+        dispatch(deleteNote({ id }));
+
+        resetInput();
+    }
+
+    const handleArchive = (id: string) => {
+        dispatch(archiveNote({ id }));
+
+        resetInput();
     }
 
     return (
@@ -101,9 +127,11 @@ const Home = () => {
                     activeAndPinnedNotes.map((note, index) => (
                         <div key={note.id} className='border border-[#5F6368] rounded-lg w-80 px-3 py-3 shadow-lg wrap-break-word whitespace-pre-wrap'>
                             <h1 className='text-xl mb-2'>{note.title}</h1>
-                            <p>{note.text}</p>
-                            <div className='flex justify-end'>
-                                <div className='flex'>
+                            <p className='mb-1'>{note.text}</p>
+
+                            <div className='flex justify-between items-center'>
+
+                                <div className='flex gap-0.5'>
                                     <button
                                         onClick={() => note.status === "active" ? dispatch(pinNote({ id: note.id })) : dispatch(activateNote({ id: note.id }))}
                                         className={`${note.status === "pinned" ? "bg-gray-800" : ""} md:p-3 p-2.5 rounded-full text-gray-300 hover:bg-gray-900 hover:text-white transition`}
@@ -111,7 +139,7 @@ const Home = () => {
                                         <Pin size={16} />
                                     </button>
                                     <button
-                                        onClick={() => dispatch(archiveNote({ id: note.id }))}
+                                        onClick={() => handleArchive(note.id)}
                                         className='md:p-3 p-2.5 rounded-full text-gray-300 hover:bg-gray-900 hover:text-white transition'
                                     >
                                         <Archive size={16} />
@@ -123,11 +151,16 @@ const Home = () => {
                                         <Edit size={16} />
                                     </button>
                                     <button
-                                        onClick={() => dispatch(deleteNote({ id: note.id }))}
+                                        onClick={() => handleDelete(note.id)}
                                         className='md:p-3 p-2.5 rounded-full text-gray-300 hover:bg-gray-900 hover:text-red-500 transition'
                                     >
                                         <Trash2 size={16} />
                                     </button>
+                                </div>
+
+                                <div className='pr-2'>
+                                    <p className='text-[11px] text-gray-300'>{new Date(note.createdAt).toLocaleDateString()}</p>
+                                    <p className='text-xs text-gray-300'>{new Date(note.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</p>
                                 </div>
                             </div>
                         </div>
@@ -139,7 +172,3 @@ const Home = () => {
 }
 
 export default Home
-
-
-// new Date(Date.now()).toLocaleDateString()
-// new Date(Date.now()).toLocaleTimeString()
