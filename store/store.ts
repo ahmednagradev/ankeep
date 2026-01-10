@@ -1,4 +1,4 @@
-import notesReducer from "./noteSlice"
+import notesReducer from "./notesSlice"
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 import localStorage from "redux-persist/es/storage";
