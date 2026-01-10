@@ -1,9 +1,10 @@
 "use client";
 
-import { Archive, ArchiveRestore, Pin, Trash2 } from 'lucide-react';
+import { ArchiveRestore, Trash2 } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { appDispatch, rootState } from '@/store/store';
 import { deleteNote, activateNote } from '@/store/notesSlice';
+import { useState } from 'react';
 
 const Archived = () => {
 	const notesData = useSelector((state: rootState) => state.notes.notes);

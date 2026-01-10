@@ -13,12 +13,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     return (
         <html lang="en" className="dark">
             <body>
-                <Providers>
-                    <_layout>
+                <_layout>
+                    <Providers>
                         {children}
-                    </_layout>
-                </Providers>
-                <Toaster />
+                    </Providers>
+                    <Toaster />
+                </_layout>
             </body>
         </html>
     );
